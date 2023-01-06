@@ -148,14 +148,14 @@ class ValidationRuleParserTest extends TestCase
         $data = ['items' => [['type' => 'foo']]];
 
         $exploded = (new ValidationRuleParser($data))->explode(
-            ['items.*.type' => 'in:foo,bar|notregrex:/^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]*$/i|max:20|not_Regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]*$/|REGEX:/^(foo|bar)$/imsxADSUXJu']
+            ['items.*.type' => 'in:foo,bar|notregrex:/^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]*$/i|max:20|REGEX:/^(foo|bar)$/imsxADSUXJu|not_Regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]*$/']
         );
 
         $this->assertSame('in:foo,bar', $exploded->rules['items.0.type'][0]);
         $this->assertSame('notregrex:/^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]*$/i', $exploded->rules['items.0.type'][1]);
         $this->assertSame('max:20', $exploded->rules['items.0.type'][2]);
-        $this->assertSame('not_Regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]*$/', $exploded->rules['items.0.type'][3]);
-        $this->assertSame('REGEX:/^(foo|bar)$/imsxADSUXJu', $exploded->rules['items.0.type'][4]);
+        $this->assertSame('REGEX:/^(foo|bar)$/imsxADSUXJu', $exploded->rules['items.0.type'][3]);
+        $this->assertSame('not_Regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]*$/', $exploded->rules['items.0.type'][4]);
     }
 
     public function testExplodeGeneratesNestedRules()
