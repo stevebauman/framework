@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Validation\InvokableRule;
 use Illuminate\Contracts\Validation\Rule as RuleContract;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\Rules\Unique;
@@ -86,9 +87,7 @@ class ValidationRuleParser
     protected function explodeExplicitRule($rule, $attribute)
     {
         if (is_string($rule)) {
-            [$name] = static::parseStringRule($rule);
-
-            return static::ruleIsRegex($name) ? [$rule] : explode('|', $rule);
+            return $this->explodeStringRules($rule);
         }
 
         if (is_object($rule)) {
@@ -133,6 +132,25 @@ class ValidationRuleParser
         }
 
         return (string) $rule;
+    }
+
+    /**
+     * Extract rules from a rule string.
+     *
+     * @param  string  $rule
+     * @return array
+     */
+    protected function explodeStringRules($rule)
+    {
+        if (! static::ruleIsRegex($rule)) {
+            return explode('|', $rule);
+        }
+
+        preg_match_all("/(regex|not_regex|notregex'):(\/.*?\/[a-z]*)/i", $rule, $matches);
+
+        $regexes = head($matches) ?? [];
+
+        return array_filter([...explode('|', Str::remove($regexes, $rule)), ...$regexes]);
     }
 
     /**
@@ -292,7 +310,7 @@ class ValidationRuleParser
      */
     protected static function ruleIsRegex($rule)
     {
-        return in_array(strtolower($rule), ['regex', 'not_regex', 'notregex'], true);
+        return Str::contains($rule, ['regex', 'not_regex', 'notregex'], true);
     }
 
     /**
