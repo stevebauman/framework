@@ -145,7 +145,7 @@ class ValidationRuleParser
             return explode('|', $rule);
         }
 
-        preg_match_all("/(regex|not_regex|notregex'):(\/.*?\/[a-z]*)/i", $rule, $matches);
+        preg_match_all("/(regex|not_regex|notregex):(\/.*?\/[a-z]*)/i", $rule, $matches);
 
         $regexes = head($matches) ?? [];
 
