@@ -142,7 +142,7 @@ class ValidationRuleParser
      */
     protected function explodeStringRules($rule)
     {
-        if (! static::ruleIsRegex($rule)) {
+        if (! static::ruleContainsRegex($rule)) {
             return explode('|', $rule);
         }
 
@@ -310,7 +310,18 @@ class ValidationRuleParser
      */
     protected static function ruleIsRegex($rule)
     {
-        return Str::contains($rule, ['regex', 'not_regex', 'notregex'], true);
+        return in_array(strtolower($rule), ['regex', 'not_regex', 'notregex'], true);
+    }
+
+    /**
+     * Determine if the rule contains a regular expression.
+     *
+     * @param  string  $rule
+     * @return bool
+     */
+    protected static function ruleContainsRegex($rule)
+    {
+        return Str::contains($rule, ['regex:', 'not_regex:', 'notregex:'], true);
     }
 
     /**
