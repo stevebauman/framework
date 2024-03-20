@@ -3,6 +3,7 @@
 namespace Illuminate\Database\Schema;
 
 use Illuminate\Support\Fluent;
+use Illuminate\Support\Traits\Conditionable;
 
 /**
  * @method $this after(string $column) Place the column "after" another column (MySQL)
@@ -34,5 +35,5 @@ use Illuminate\Support\Fluent;
  */
 class ColumnDefinition extends Fluent
 {
-    //
+    use Conditionable;
 }
