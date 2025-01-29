@@ -20,6 +20,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
+use Illuminate\Support\Uri;
 use InvalidArgumentException;
 use Laravel\SerializableClosure\SerializableClosure;
 use LogicException;
@@ -782,6 +783,31 @@ class Route
         );
 
         return $this;
+    }
+
+    /**
+     * Set the subdomain and root domain for the route.
+     *
+     * @param \BackedEnum|string $subdomain
+     * @param \BackedEnum|string $domain
+     * @return $this
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function subdomain($subdomain, $domain)
+    {
+        if ($subdomain instanceof BackedEnum && ! is_string($subdomain = $domain->value)) {
+            throw new InvalidArgumentException('Enum must be string backed.');
+        }
+
+        if (Str::isUrl($domain)) {
+            $domain = implode(':', array_filter([
+                parse_url($domain, PHP_URL_HOST),
+                parse_url($domain, PHP_URL_PORT)
+            ]));
+        }
+
+        return $this->domain($subdomain.'.'.$domain);
     }
 
     /**

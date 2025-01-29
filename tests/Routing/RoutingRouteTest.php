@@ -779,6 +779,25 @@ class RoutingRouteTest extends TestCase
         $this->assertSame('hello', $router->dispatch(Request::create('http://api.foo.bar/foo/bar', 'GET'))->getContent());
     }
 
+    public function testRouteSubdomainRegistration()
+    {
+        $router = $this->getRouter();
+        $router->get('/foo/bar')->subdomain('api', 'foo.bar')->uses(function () {
+            return 'hello';
+        });
+        $this->assertSame('hello', $router->dispatch(Request::create('http://api.foo.bar/foo/bar', 'GET'))->getContent());
+
+        $router->get('/bar/baz')->subdomain('api', 'http://foo.bar')->uses(function () {
+            return 'hello';
+        });
+        $this->assertSame('hello', $router->dispatch(Request::create('http://api.foo.bar/bar/baz', 'GET'))->getContent());
+
+        $router->get('/baz/zal')->subdomain('api', 'www.foo.bar:1234')->uses(function () {
+            return 'hello';
+        });
+        $this->assertSame('hello', $router->dispatch(Request::create('http://api.foo.bar:1234/bar/baz', 'GET'))->getContent());
+    }
+
     public function testMatchesMethodAgainstRequests()
     {
         /*
