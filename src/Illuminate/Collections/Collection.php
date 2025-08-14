@@ -987,6 +987,18 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     }
 
     /**
+     * Get the value of the given key as a new collection.
+     *
+     * @param  string  $key
+     * @param  mixed  $default
+     * @return static
+     */
+    public function scope($key, $default = null)
+    {
+        return new static($this->get($key, $default));
+    }
+
+    /**
      * Get and remove the last N items from the collection.
      *
      * @param  int  $count
