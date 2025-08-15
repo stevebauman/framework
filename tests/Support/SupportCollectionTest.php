@@ -4432,6 +4432,47 @@ class SupportCollectionTest extends TestCase
         ], $data->select(collect(['first', 'email']))->all());
     }
 
+    public function testScope()
+    {
+        $c = new Collection([
+            'tags' => ['laravel', 'php'],
+            'menu' => [
+                'level1' => ['item1', 'item2'],
+                'level2' => ['item3', 'item4'],
+            ],
+            'key' => null,
+        ]);
+
+        $tags = $c->scope('tags');
+        $this->assertInstanceOf(Collection::class, $tags);
+        $this->assertEquals(['laravel', 'php'], $tags->all());
+
+        $menu = $c->scope('menu');
+        $this->assertInstanceOf(Collection::class, $menu);
+        $this->assertEquals([
+            'level1' => ['item1', 'item2'],
+            'level2' => ['item3', 'item4'],
+        ], $menu->all());
+
+        $nullResult = $c->scope('key');
+        $this->assertInstanceOf(Collection::class, $nullResult);
+        $this->assertEquals([], $nullResult->all());
+
+        $missing = $c->scope('missing');
+        $this->assertInstanceOf(Collection::class, $missing);
+        $this->assertEquals([], $missing->all());
+
+        $withDefault = $c->scope('missing', ['default', 'values']);
+        $this->assertInstanceOf(Collection::class, $withDefault);
+        $this->assertEquals(['default', 'values'], $withDefault->all());
+
+        $withCallback = $c->scope('missing', function () {
+            return ['callback', 'result'];
+        });
+        $this->assertInstanceOf(Collection::class, $withCallback);
+        $this->assertEquals(['callback', 'result'], $withCallback->all());
+    }
+
     #[DataProvider('collectionClassProvider')]
     public function testGettingAvgItemsFromCollection($collection)
     {
