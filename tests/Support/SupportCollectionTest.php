@@ -4435,12 +4435,12 @@ class SupportCollectionTest extends TestCase
     public function testScope()
     {
         $c = new Collection([
+            'key' => null,
             'tags' => ['laravel', 'php'],
             'menu' => [
                 'level1' => ['item1', 'item2'],
                 'level2' => ['item3', 'item4'],
             ],
-            'key' => null,
         ]);
 
         $tags = $c->scope('tags');
